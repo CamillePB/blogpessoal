@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
 
+//Classe que conecta a interface do usuário com o sistema de ações dela
+
 @RestController
 @RequestMapping("/postagens")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
