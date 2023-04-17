@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
 public class PostagemController {
 
 	@Autowired
-	private PostagemRepository postagemRepository;
+	private PostagemRepository postagemRepository; // variavel que contem todos os atributos da model
 	
 	@GetMapping
 	public ResponseEntity<List<Postagem>> getAll(){
@@ -62,12 +62,14 @@ public class PostagemController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem){//Popular tabela
-		return postagemRepository.findById(postagem.getId())//Resposta para um uso especifico do CORPO da requisição
+	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem){//Popular tabela 
 		//UPTADE tb_postagens SET titulo = ?, texto = ?, data = ? WHERE id = id;
+		
+		return postagemRepository.findById(postagem.getId())//Resposta para um uso especifico do CORPO da requisição
+		
 		.map(resposta -> ResponseEntity.status(HttpStatus.OK) //findById em resposta, se existir, mostra a resposta
 		.body(postagemRepository.save(postagem)))
-		.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build()); //findById em resposta, se null, resposta por build
+		.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 	
 	@ResponseStatus(HttpStatus.NO_CONTENT)//Resposta para sem conteudo
