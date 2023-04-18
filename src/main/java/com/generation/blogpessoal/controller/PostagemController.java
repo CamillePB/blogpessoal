@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
+import com.generation.blogpessoal.repository.TemaRepository;
 
 import jakarta.validation.Valid;
 
@@ -32,62 +33,65 @@ public class PostagemController {
 
 	@Autowired
 	private PostagemRepository postagemRepository; // variavel que contem todos os atributos da model
-	
+
+	@Autowired
+	private TemaRepository temaRepository;
+
 	@GetMapping
-	public ResponseEntity<List<Postagem>> getAll(){
-		return ResponseEntity.ok(postagemRepository.findAll()); //SELECT * FROM tb_posagens
+	public ResponseEntity<List<Postagem>> getAll() {
+		return ResponseEntity.ok(postagemRepository.findAll()); // SELECT * FROM tb_posagens
 	}
-	
-	@GetMapping("/{id}")// entre chaves: parametro é uma variavel
-	public ResponseEntity<Postagem> getAll(@PathVariable Long id){
-		return postagemRepository.findById(id) //Selecionar atributos pelo id: SELECT * FROM tb_posagens WHERE id = id;
-		
-				.map(resposta -> ResponseEntity.ok(resposta)) //findById em resposta, se existir, mostra a resposta
-		
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build()); //findById em resposta, se null, resposta por build
-	
+
+	@GetMapping("/{id}") // entre chaves: parametro é uma variavel
+	public ResponseEntity<Postagem> getAll(@PathVariable Long id) {
+		return postagemRepository.findById(id) // Selecionar atributos pelo id: SELECT * FROM tb_posagens WHERE id = id;
+
+				.map(resposta -> ResponseEntity.ok(resposta)) // findById em resposta, se existir, mostra a resposta
+
+				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build()); // findById em resposta, se null, resposta
+																				// por build
+
 	}
-	
-	@GetMapping("/titulo/{titulo}")// entre chaves: parametro é uma variavel
-	public ResponseEntity<List<Postagem>> getByTitulo(@PathVariable String titulo){
+
+	@GetMapping("/titulo/{titulo}") // entre chaves: parametro é uma variavel
+	public ResponseEntity<List<Postagem>> getByTitulo(@PathVariable String titulo) {
 		return ResponseEntity.ok(postagemRepository.findAllByTituloContainingIgnoreCase(titulo));
-		
+
 	}
-	
+
 	@PostMapping
-	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem){//Popular tabela
-		return ResponseEntity.status(HttpStatus.CREATED)//Resposta para um uso especifico do CORPO da requisição
-				.body(postagemRepository.save(postagem));
-		//INSERT INTO tb_postagens (data, ttulo, texto);
+	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {// Popular tabela
+		if (temaRepository.existsById(postagem.getTema().getId()))
+			return ResponseEntity.status(HttpStatus.CREATED)// Resposta para um uso especifico do CORPO da requisição
+					.body(postagemRepository.save(postagem));
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe", null);
+		// INSERT INTO tb_postagens (data, ttulo, texto);
 	}
-	
+
 	@PutMapping
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem){//Popular tabela 
 		//UPTADE tb_postagens SET titulo = ?, texto = ?, data = ? WHERE id = id;
 		
-		return postagemRepository.findById(postagem.getId())//Resposta para um uso especifico do CORPO da requisição
-		
-		.map(resposta -> ResponseEntity.status(HttpStatus.OK) //findById em resposta, se existir, mostra a resposta
-		.body(postagemRepository.save(postagem)))
-		.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+		if(postagemRepository.existsById(postagem.getId())) {
+			if(temaRepository.existsById(postagem.getTema().getId()))
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(postagemRepository.save(postagem));
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe", null);
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
-	
-	@ResponseStatus(HttpStatus.NO_CONTENT)//Resposta para sem conteudo
+
+	@ResponseStatus(HttpStatus.NO_CONTENT) // Resposta para sem conteudo
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
-		
+
 		Optional<Postagem> postagem = postagemRepository.findById(id);
-		
-		if(postagem.isEmpty())
+
+		if (postagem.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		
+
 		postagemRepository.deleteById(id);
-		//DELETE * FROM tb_postagens WHERE id = id;
+		// DELETE * FROM tb_postagens WHERE id = id;
 	}
-	
-	
-	
-	
-	
-	
+
 }
