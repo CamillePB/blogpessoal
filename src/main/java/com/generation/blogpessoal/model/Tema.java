@@ -27,7 +27,7 @@ public class Tema {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tema", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties("tema")
-	private List<Postagem> postagem; //chave estrangeira tb_postagens (tema_id)
+	private List<Postagem> postagem; 
 	
 	public Long getId() {
 		return id;

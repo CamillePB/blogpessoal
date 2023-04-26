@@ -62,7 +62,7 @@ public class PostagemController {
 	@PostMapping
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {// Popular tabela
 		if (temaRepository.existsById(postagem.getTema().getId()))
-			return ResponseEntity.status(HttpStatus.CREATED)// Resposta para um uso especifico do CORPO da requisição
+			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(postagemRepository.save(postagem));
 		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe", null);
 		// INSERT INTO tb_postagens (data, ttulo, texto);
