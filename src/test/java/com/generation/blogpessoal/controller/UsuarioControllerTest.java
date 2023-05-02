@@ -125,7 +125,7 @@ public class UsuarioControllerTest {
 	}
 	
 	@Test
-	@DisplayName("😁 Deve authenticar o login")
+	@DisplayName("😁 Deve autenticar o login")
 	public void deveAutenticarlogin() {
 		
 		Optional<Usuario> usuarioCadastrado = usuarioService.cadastrarUsuario(new Usuario(0L,
@@ -144,7 +144,7 @@ public class UsuarioControllerTest {
 				.withBasicAuth(usuario, senha )
 				.exchange("/usuarios/logar", HttpMethod.GET, loginUser, String.class);
 		
-			assertEquals(HttpStatus.OK, resposta.getStatusCode());// se corpoRespota foi atualizado, mostrar status
+			assertEquals(HttpStatus.OK, resposta.getStatusCode());// se autenticacao teve exito, mostrar status
 			
 			/*Optional<Usuario> usuarioCadastrado = usuarioService.cadastrarUsuario(new Usuario(0L,
 			"Joao", "joao@email.com.br", "12345678", "-"));//cadastrar user
