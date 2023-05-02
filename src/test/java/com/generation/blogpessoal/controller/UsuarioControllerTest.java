@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.model.UsuarioLogin;
 import com.generation.blogpessoal.repository.UsuarioRepository;
 import com.generation.blogpessoal.service.UsuarioService;
 
@@ -121,7 +122,7 @@ public class UsuarioControllerTest {
 				.withBasicAuth("root@root.com", "rootroot")
 				.exchange("/usuarios/" + usuario, HttpMethod.GET, null, String.class);
 		
-			assertEquals(HttpStatus.OK, resposta.getStatusCode());// se corpoRespota foi atualizado, mostrar status
+			assertEquals(HttpStatus.OK, resposta.getStatusCode());// se resposta existe, mostrar status
 	}
 	
 	@Test
@@ -131,33 +132,12 @@ public class UsuarioControllerTest {
 		Optional<Usuario> usuarioCadastrado = usuarioService.cadastrarUsuario(new Usuario(0L,
 				"Joao", "joao@email.com.br", "12345678", "-"));//cadastrar user
 		
-		String usuario = usuarioCadastrado.get().getUsuario();
-		String senha = usuarioCadastrado.get().getSenha();
-		
-		HttpEntity<Usuario> loginUser = new HttpEntity<Usuario>(new Usuario(0L,
-				"Joao", usuario, senha, "-"));//cadastrar user
-		
-
-		System.out.println(usuario+"   "+ senha);
+		HttpEntity<UsuarioLogin> loginUser = new HttpEntity<UsuarioLogin>(new UsuarioLogin(0L,
+				"", "joao@email.com.br", "12345678", "-", ""));//cadastrar user
 			
-		ResponseEntity<String> resposta = testRestTemplate
-				.withBasicAuth(usuario, senha )
-				.exchange("/usuarios/logar", HttpMethod.GET, loginUser, String.class);
-		
+		ResponseEntity<UsuarioLogin> resposta = testRestTemplate
+				.exchange("/usuarios/logar", HttpMethod.POST, loginUser, UsuarioLogin.class);
 			assertEquals(HttpStatus.OK, resposta.getStatusCode());// se autenticacao teve exito, mostrar status
-			
-			/*Optional<Usuario> usuarioCadastrado = usuarioService.cadastrarUsuario(new Usuario(0L,
-			"Joao", "joao@email.com.br", "12345678", "-"));//cadastrar user
-	
-	HttpEntity<Usuario> loginUser = new HttpEntity<Usuario>(new Usuario(0L,
-			"Juliana", usuarioCadastrado.get().getUsuario(), usuarioCadastrado.get().getSenha(), "-"));//cadastrar user
-		
-	ResponseEntity<String> loginUserResposta = testRestTemplate
-			.withBasicAuth(usuarioCadastrado.get().getUsuario(), usuarioCadastrado.get().getSenha())
-			.exchange("/usuarios/logar", HttpMethod.GET, loginUser, String.class);
-	
-		assertEquals(HttpStatus.OK, loginUserResposta.getStatusCode());// se corpoRespota foi atualizado, mostrar status
-*/
 	}
 	
 	
