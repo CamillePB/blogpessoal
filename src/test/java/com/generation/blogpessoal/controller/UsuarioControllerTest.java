@@ -132,6 +132,7 @@ public class UsuarioControllerTest {
 		Optional<Usuario> usuarioCadastrado = usuarioService.cadastrarUsuario(new Usuario(0L,
 				"Joao", "joao@email.com.br", "12345678", "-"));//cadastrar user
 		
+		//importar a model UsuarioLogin
 		HttpEntity<UsuarioLogin> loginUser = new HttpEntity<UsuarioLogin>(new UsuarioLogin(0L,
 				"", "joao@email.com.br", "12345678", "-", ""));//cadastrar user
 			
